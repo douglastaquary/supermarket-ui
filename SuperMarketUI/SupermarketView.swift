@@ -1,8 +1,8 @@
 //
-//  SupermarkView.swift
+//  SupermarketView.swift
 //  SuperMarketUI
 //
-//  Created by Douglas Alexandre Barros Taquary on 19/02/20.
+//  Created by Douglas Alexandre Barros Taquary on 25/02/20.
 //  Copyright © 2020 Douglas Taquary. All rights reserved.
 //
 

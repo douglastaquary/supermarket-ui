@@ -2,7 +2,7 @@
 //  SupermarketViewModel.swift
 //  SuperMarketUI
 //
-//  Created by Douglas Alexandre Barros Taquary on 19/02/20.
+//  Created by Douglas Alexandre Barros Taquary on 25/02/20.
 //  Copyright © 2020 Douglas Taquary. All rights reserved.
 //
 
@@ -33,7 +33,7 @@ final class SupermarketViewModel: ObservableObject {
     private func fetchedSupermarkets(at version: Version.Identifier) -> [Supermarket] {
         return try! Supermarket.all(in: storeCoordinator, at: version).sorted(by: {
             (($0.name, $0.id.uuidString) < ($1.name, $1.id.uuidString))
-        }) 
+        })
     }
     
     func addNewSupermarket() {
