@@ -7,26 +7,12 @@
 //
 
 import UIKit
-import LLVS
-import LLVSCloudKit
-import CloudKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-    lazy var storeCoordinator: StoreCoordinator = {
-        LLVS.log.level = .verbose
-        let coordinator = try! StoreCoordinator()
-        let container = CKContainer(identifier: "iCloud.com.douglastaquary.supermarketui")
-        let exchange = CloudKitExchange(with: coordinator.store, storeIdentifier: "MainStore", cloudDatabaseDescription: .privateDatabaseWithCustomZone(container, zoneIdentifier: "MainZone"))
-        coordinator.exchange = exchange
-        exchange.subscribeForPushNotifications()
-        return coordinator
-    }()
-    
-    lazy var dataSource: SupermarketViewModel = {
-        SupermarketViewModel(storeCoordinator: storeCoordinator)
+    lazy var supermarketService: SupermarketService = {
+        SupermarketService()
     }()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -39,9 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        let preSyncVersion = storeCoordinator.currentVersion
-        dataSource.sync { _ in
-            let result: UIBackgroundFetchResult = self.storeCoordinator.currentVersion == preSyncVersion ? .noData : .newData
+        let preSyncVersion = supermarketService.storeCoordinator.currentVersion
+        supermarketService.sync { _ in
+            let result: UIBackgroundFetchResult = self.supermarketService.storeCoordinator.currentVersion == preSyncVersion ? .noData : .newData
             completionHandler(result)
         }
     }

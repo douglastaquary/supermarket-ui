@@ -11,7 +11,8 @@ import UIKit
 
 /// A list of Supermarkets.
 struct SupermarketsView : View {
-    @EnvironmentObject var viewModel: SupermarketViewModel
+    @EnvironmentObject var supermarketService: SupermarketService
+    //var viewModel: SupermarketViewModel
     
     private func thumbnail(for supermarket: Supermarket) -> Image {
         if let data = supermarket.avatarJPEGData {
@@ -21,15 +22,16 @@ struct SupermarketsView : View {
         }
     }
     
+
     var body: some View {
         NavigationView {
             List {
-                ForEach(viewModel.items) { supermarket in
-                    SupermarketCell(supermarketID: supermarket.id)
-                        .environmentObject(self.viewModel)
+                ForEach(supermarketService.supermarkets) { supermarket in
+                    SupermarketCell(supermarket: supermarket)
+                        .environmentObject(self.supermarketService)
                 }.onDelete { indices in
                     indices.forEach {
-                        self.viewModel.deleteSupermarket(withID: self.viewModel.items[$0].id)
+                        self.supermarketService.deleteSupermarket(withID: self.supermarketService.supermarkets[$0].id)
                     }
                 }
             }
@@ -39,7 +41,7 @@ struct SupermarketsView : View {
                 trailing: Button(
                     action: {
                         withAnimation {
-                            self.viewModel.addNewSupermarket()
+                            self.supermarketService.addNewSupermarket()
                         }
                     }
                 ) {

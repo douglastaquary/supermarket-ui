@@ -9,6 +9,44 @@
 import SwiftUI
 
 /// Detail view for a Contact
+struct SupermarketItemView: View {
+    @EnvironmentObject var supermarketService: SupermarketService
+    
+    @State var supermarketItem: SupermarketItem = SupermarketItem()
+    
+    var supermarketID: Supermarket.ID
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Nome")) {
+                    TextField("Nome", text: $supermarketItem.name)
+                    TextField("Valor", text: $supermarketItem.price)
+                }
+//                Section(header: Text("Quantidade")) {
+//                    TextField("Quantidade", text: "\(Double($supermarketItem.amount))")
+//
+//                }
+            }
+            .navigationBarTitle(Text("Item"))
+            .navigationBarItems(
+                leading: EditButton(),
+                trailing:
+                    Button(action: {
+                        self.supermarketService.addItem(for: self.supermarketID, with: self.supermarketItem)
+                        //self.showEditView.toggle()
+                    }
+                ) {
+                    Text("Salvar")
+                }
+            )
+        }
+    }
+}
+
+
+
+/// Detail view for a Contact
 struct SupermarketView: View {
     @EnvironmentObject var viewModel: SupermarketViewModel
     var supermarketID: Supermarket.ID
@@ -16,13 +54,13 @@ struct SupermarketView: View {
     /// Binding used to track edits. When a field is edited, it triggers an update
     /// to this binding, which passes the change directly to the viewModel, and thus
     /// the store
-    private var supermarket: Binding<Supermarket> {
+    var supermarket: Binding<Supermarket> {
         Binding<Supermarket>(
             get: { () -> Supermarket in
-                self.viewModel.supermarket(withID: self.supermarketID)
+                self.viewModel.supermarketService.supermarket(withID: self.supermarketID)
             },
-            set: { newSupermarket in
-                self.viewModel.update(newSupermarket)
+            set: { supermarket in
+                self.viewModel.supermarketService.update(supermarket)
             }
         )
     }
@@ -40,8 +78,10 @@ struct SupermarketView: View {
                     TextField("Country", text: supermarket.address.country)
                 }
             }
-            .navigationBarTitle(Text("Supermarket"))
+            .navigationBarTitle(Text("Item"))
         }
     }
 }
+
+
 

@@ -19,8 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let window = UIWindow(windowScene: scene)
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let supermarketsView = SupermarketsView()
-                .environmentObject(appDelegate.dataSource)
-                .accentColor(.green)
+                    .environmentObject(appDelegate.supermarketService)
+                    .accentColor(.green)
             window.rootViewController = UIHostingController(rootView: supermarketsView)
             self.window = window
             window.makeKeyAndVisible()
@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneWillEnterForeground(_ scene: UIScene) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.dataSource.sync()
+        appDelegate.supermarketService.sync()
     }
 
 

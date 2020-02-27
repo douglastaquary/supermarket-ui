@@ -13,7 +13,7 @@ import SwiftUI
 struct Supermarket: Model {
     static let storeIdentifierTypeTag = "Supermarket"
     var id: UUID = .init()
-    var items: [SpermarketItem] = []
+    var items: [SupermarketItem] = []
     var name: String = ""
     var address: Address = .init()
     var avatarJPEGData: Data?
@@ -21,15 +21,15 @@ struct Supermarket: Model {
 
 
 /// Person is embedded in Contact, and so not a Model type. It is just Codable.
-struct SpermarketItem: Codable, Equatable {
-    var id: UUID = .init()
-    var name: String = ""
-    var price: String = ""
-    var amount: Double = 0.0
-    var discount: String = ""
-    var avatarJPEGData: Data?
+public struct SupermarketItem: Codable, Equatable, Identifiable {
+    public var id: UUID = .init()
+    public var name: String = ""
+    public var price: String = ""
+    public var amount: Double = 0.0
+    public var discount: String = ""
+    public var avatarJPEGData: Data?
     
-    var fullNameOrPlaceholder: String {
+    public var fullNameOrPlaceholder: String {
         name.isEmpty ? "Novo item" : name
     }
     

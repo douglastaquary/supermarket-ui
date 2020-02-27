@@ -8,18 +8,14 @@
 
 import SwiftUI
 
-/// Cell used in the main contacts list. When tapped, it pushes
-/// the ContactView to edit the Contact
 struct SupermarketCell: View {
-    @EnvironmentObject var viewModel: SupermarketViewModel
-    var supermarketID: Supermarket.ID
-    var supermarket: Supermarket { viewModel.supermarket(withID: supermarketID) }
+    @EnvironmentObject var supermarketService: SupermarketService
+    var supermarket: Supermarket
 
     var body: some View {
-        NavigationLink(
-            destination:
-                SupermarketView(supermarketID: supermarketID)
-                    .environmentObject(viewModel)
+        NavigationLink(destination:
+            SupermarketDetailView(viewModel: SupermarketDetailViewModel(supermarket: supermarket))
+                .environmentObject(self.supermarketService)
         ) {
             HStack {
                 SupermarketThumbnail(supermarket: supermarket)
@@ -38,6 +34,24 @@ struct SupermarketThumbnail: View {
     var body: some View {
         var image: Image
         if let data = supermarket.avatarJPEGData {
+            image = Image(uiImage: UIImage(data:data)!)
+        } else {
+            image = Image(systemName: "cart")
+        }
+        return image
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .cornerRadius(4.0)
+            .frame(width: 40, height: 40, alignment: .center)
+            .foregroundColor(.green)
+    }
+}
+
+struct SupermarketItemThumbnail: View {
+    var supermarketItem: SupermarketItem
+    var body: some View {
+        var image: Image
+        if let data = supermarketItem.avatarJPEGData {
             image = Image(uiImage: UIImage(data:data)!)
         } else {
             image = Image(systemName: "cart")

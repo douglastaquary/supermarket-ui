@@ -15,56 +15,18 @@ import CloudKit
 
 final class SupermarketViewModel: ObservableObject {
     
-    let storeCoordinator: StoreCoordinator
+    var supermarketService: SupermarketService
     
-    private var supermarketSubscriber: AnyCancellable?
-    
-    init(storeCoordinator: StoreCoordinator) {
-        self.storeCoordinator = storeCoordinator
-        supermarketSubscriber = storeCoordinator.currentVersionSubject
-            .receive(on: DispatchQueue.main)
-            .map( { self.fetchedSupermarkets(at: $0) })
-            .assign(to: \.items, on: self)
+    public var items: [Supermarket] = []
+        
+    init(supermarketService: SupermarketService) {
+        self.supermarketService = supermarketService
+        self.items = self.supermarketService.supermarkets
     }
     
-    
-    @Published var items: [Supermarket] = []
+    public func sink(_ supermarketID: Supermarket.ID) {
+        let supermarket = supermarketService.supermarket(withID: supermarketID)
+        supermarketService.update(supermarket)
+    }
 
-    private func fetchedSupermarkets(at version: Version.Identifier) -> [Supermarket] {
-        return try! Supermarket.all(in: storeCoordinator, at: version).sorted(by: {
-            (($0.name, $0.id.uuidString) < ($1.name, $1.id.uuidString))
-        })
-    }
-    
-    func addNewSupermarket() {
-        let newSupermarket = Supermarket()
-        let change: Value.Change = .insert(try! newSupermarket.encodeValue())
-        try! storeCoordinator.save([change])
-        sync()
-    }
-    
-    func update(_ supermarket: Supermarket) {
-        let change: Value.Change = .update(try! supermarket.encodeValue())
-        try! storeCoordinator.save([change])
-        sync()
-    }
-    
-    func deleteSupermarket(withID id: Supermarket.ID) {
-        let change: Value.Change = .remove(Supermarket.storeValueId(for: id))
-        try! storeCoordinator.save([change])
-        sync()
-
-    }
-    
-    func supermarket(withID id: Supermarket.ID) -> Supermarket {
-        return items.first(where: { $0.id == id }) ?? Supermarket()
-    }
-    
-    // MARK: Syncing
-    
-    func sync(executingUponCompletion completionHandler: ((Swift.Error?) -> Void)? = nil) {
-        storeCoordinator.exchange { _ in
-            self.storeCoordinator.merge()
-        }
-    }
 }
